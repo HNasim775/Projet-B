@@ -1,0 +1,17 @@
+import requests
+from config import PRESTASHOP_API_URL, PRESTASHOP_API_KEY
+import base64
+#from views import cache
+
+presta_key = base64.b64encode(
+    PRESTASHOP_API_KEY.encode("utf-8")).decode("utf-8")
+headers = {
+    'Authorization': f'basic {presta_key}'
+}
+#@cache.memoize(timeout=300)
+def fetch_product(product_id):
+    response = requests.get(f'{PRESTASHOP_API_URL}/products/{product_id}', headers=headers)
+    print(headers, response)
+    if response.status_code == 200:
+        return response.json()
+    return "the Micro-Services A is being renovated"

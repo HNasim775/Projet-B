@@ -1,0 +1,74 @@
+pipeline {
+    agent any
+    environment {
+        DB_ENV = credentials('DB_PRESTA')
+        PRESTA_ENV = credentials('PRESTA_VAR')
+    }
+    stages {
+        stage('Clean') {
+            steps {
+                cleanWs()
+                echo 'Espace de travail nettoyé.'
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                // Récupérer le code source depuis GitHub
+                checkout([$class: 'GitSCM',
+                        branches: [[name: 'nasim']], // Spécifiez la branche souhaitée
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [[$class: 'CleanBeforeCheckout'], [$class: 'RelativeTargetDirectory', relativeTargetDir: '']], 
+                        userRemoteConfigs: [[url: 'https://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@github.com/Projetits/Project-B-Its.git']]]
+                )
+                echo 'Code source récupéré depuis GitHub.'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Cette étape peut inclure la construction de votre application, par exemple, en utilisant un script ou une commande
+                sh ('cp $DB_ENV ./microA/app/')
+                sh ('cp $PRESTA_ENV ./microA/app/')
+                sh 'cd ./microA/app/ && docker compose up -d'
+                echo 'Installation de Prestashop & Installation Micro-Services'
+            }
+        }
+
+        // stage('Test') {
+        //     steps {
+        //         dir ('./microA/app'){
+        //             script {
+        //             // Exécutez les tests unitaires
+        //             // sh '/usr/bin/python3 -m unittest -v test_app.py'
+        //             // sh '/usr/local/bin/python3 -m unittest -v test_app.py'
+        //             sh "docker exec -i my-microservice python -m unittest tests.test_app"
+        //             }
+        //         }
+        //     }
+        // }
+
+        // stage('Deploy') {
+        //     steps {
+        //         // Cette étape peut inclure le déploiement de votre micro-service, par exemple, en utilisant Docker Compose
+                
+        //     }
+        // }
+    }
+
+    post {
+        success {
+            // Cette section spécifie ce qui doit être fait en cas de succès du pipeline
+            echo 'Le pipeline a réussi!'
+
+            // Vous pouvez ajouter des actions supplémentaires ici, comme la notification par email
+        }
+
+        failure {
+            // Cette section spécifie ce qui doit être fait en cas d'échec du pipeline
+            echo 'Le pipeline a échoué!'
+
+            // Vous pouvez ajouter des actions supplémentaires ici, comme l'envoi d'une notification d'échec
+        }
+    }
+}

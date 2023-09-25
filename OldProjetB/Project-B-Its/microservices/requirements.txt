@@ -1,0 +1,10 @@
+Flask
+Flask-MySQLdb
+flask_sqlalchemy
+flask_caching
+flask_limiter
+flask_cors
+decouple
+pymysql
+requests
+

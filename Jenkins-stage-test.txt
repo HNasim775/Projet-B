@@ -1,0 +1,7 @@
+// Installer pytest si ce n'est pas déjà fait
+sh 'python -m unittest -v test_app.py'
+// sh 'docker exec -i my-microservice python -m pytest test_app.py'
+// Exécute les tests de l'application
+// sh 'pytest'
+// sortie des tests
+// sh 'pytest test_app.py'

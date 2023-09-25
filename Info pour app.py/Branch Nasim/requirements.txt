@@ -1,0 +1,13 @@
+Flask
+Flask-SQLAlchemy
+prestashop
+requests
+Flask-Caching
+redis
+Flask-Limiter
+python-decouple
+Flask-CORS
+python-dotenv
+mysqlclient
+xmltodict
+python-decouple

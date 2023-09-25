@@ -1,0 +1,56 @@
+version: '3'
+services:
+  mysql:
+    container_name: some-mysql
+    image: mariadb:lts
+    restart: unless-stopped
+    env_file:
+      - db.env
+    networks:
+      - prestashop_network
+    volumes:
+      - dbdata:/var/lib/mysql
+  prestashop1:
+    container_name: prestashop1
+    image: prestashop/prestashop:latest # Latest stable version of the PrestaShop, to see all available images go to ...
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    ports:
+      - 8080:80
+    env_file:
+      - presta.env
+    networks:
+      - prestashop_network
+  microservice:
+    container_name: my-microservice
+    build: ./
+    restart: unless-stopped
+    ports:
+      - 5000:5000
+    env_file:
+      - .env
+    networks:
+      prestashop_network:
+  # nginx:
+  #   container_name: my-nginx
+  #   image: nginx:latest
+  #   ports:
+  #     - 80:80
+  #     - 443:443
+  #   volumes:
+  #     - ./ssl:/etc/nginx/ssl
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #   depends_on:
+  #     - microservice
+  #   networks:
+  #     - prestashop_network
+networks:
+    prestashop_network:
+      driver: bridge
+      ipam:
+        config:
+          - subnet: 192.168.99.0/24
+volumes:
+  psdata:
+  dbdata:
